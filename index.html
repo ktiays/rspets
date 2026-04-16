@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>rspets — Your Digital Companion Sanctuary</title>
+    <meta
+      name="description"
+      content="rspets is a modern pet simulation platform. Adopt, care for, and bond with your virtual companions through a beautiful HTTP API."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/css/style.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="container nav-container">
+        <a href="#" class="logo">
+          <span class="logo-icon">🐾</span>
+          <span class="logo-text">rspets</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="#features">Features</a></li>
+          <li><a href="#care">Care</a></li>
+          <li><a href="#adopt">Adopt</a></li>
+          <li>
+            <a
+              href="https://github.com/ktiays/rshell"
+              target="_blank"
+              rel="noopener"
+              >GitHub</a
+            >
+          </li>
+        </ul>
+        <button class="mobile-menu-btn" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="hero-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+      </div>
+      <div class="container hero-content">
+        <div class="hero-badge">✨ Welcome to the Sanctuary</div>
+        <h1 class="hero-title">
+          Care for digital companions<br />
+          <span class="gradient-text">one API call at a time</span>
+        </h1>
+        <p class="hero-subtitle">
+          rspets is a modern pet simulation platform that brings warmth to your
+          terminal. Adopt unique companions, nurture them with care, and watch
+          their happiness grow.
+        </p>
+        <div class="hero-cta">
+          <a href="#adopt" class="btn btn-primary">Adopt Your First Pet</a>
+          <a href="#features" class="btn btn-secondary">Explore Features</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <div class="stat-value">4</div>
+            <div class="stat-label">Care Actions</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">∞</div>
+            <div class="stat-label">Happiness Potential</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">100%</div>
+            <div class="stat-label">Love Guaranteed</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="pets-showcase">
+      <div class="container">
+        <div class="pets-marquee">
+          <div class="pets-track">
+            <div class="pet-card">
+              <div class="pet-avatar">🐱</div>
+              <div class="pet-name">Momo</div>
+              <div class="pet-species">Curious Cat</div>
+            </div>
+            <div class="pet-card">
+              <div class="pet-avatar">🐶</div>
+              <div class="pet-name">Barnaby</div>
+              <div class="pet-species">Loyal Dog</div>
+            </div>
+            <div class="pet-card">
+              <div class="pet-avatar">🦊</div>
+              <div class="pet-name">Finn</div>
+              <div class="pet-species">Clever Fox</div>
+            </div>
+            <div class="pet-card">
+              <div class="pet-avatar">🐰</div>
+              <div class="pet-name">Coco</div>
+              <div class="pet-species">Gentle Bunny</div>
+            </div>
+            <div class="pet-card">
+              <div class="pet-avatar">🐻</div>
+              <div class="pet-name">Bobo</div>
+              <div class="pet-species">Cozy Bear</div>
+            </div>
+            <div class="pet-card">
+              <div class="pet-avatar">🐼</div>
+              <div class="pet-name">Panko</div>
+              <div class="pet-species">Sleepy Panda</div>
+            </div>
+            <!-- duplicated for seamless loop -->
+            <div class="pet-card">
+              <div class="pet-avatar">🐱</div>
+              <div class="pet-name">Momo</div>
+              <div class="pet-species">Curious Cat</div>
+            </div>
+            <div class="pet-card">
+              <div class="pet-avatar">🐶</div>
+              <div class="pet-name">Barnaby</div>
+              <div class="pet-species">Loyal Dog</div>
+            </div>
+            <div class="pet-card">
+              <div class="pet-avatar">🦊</div>
+              <div class="pet-name">Finn</div>
+              <div class="pet-species">Clever Fox</div>
+            </div>
+            <div class="pet-card">
+              <div class="pet-avatar">🐰</div>
+              <div class="pet-name">Coco</div>
+              <div class="pet-species">Gentle Bunny</div>
+            </div>
+            <div class="pet-card">
+              <div class="pet-avatar">🐻</div>
+              <div class="pet-name">Bobo</div>
+              <div class="pet-species">Cozy Bear</div>
+            </div>
+            <div class="pet-card">
+              <div class="pet-avatar">🐼</div>
+              <div class="pet-name">Panko</div>
+              <div class="pet-species">Sleepy Panda</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="features">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Features</span>
+          <h2 class="section-title">
+            Everything you need to
+            <span class="gradient-text">care deeply</span>
+          </h2>
+          <p class="section-desc">
+            A thoughtfully designed simulation focused on the joy of nurturing
+            digital life.
+          </p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <h3>Adoption Center</h3>
+            <p>
+              Bring home a new friend. Choose their name and species, and start
+              your journey together with a bond that grows through every
+              interaction.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+              >
+                <path
+                  d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                ></path>
+              </svg>
+            </div>
+            <h3>Health Tracking</h3>
+            <p>
+              Monitor hunger, happiness, energy, and health in real time. Every
+              pet has unique needs, and attentive care keeps them thriving.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+            <h3>Persistent Memories</h3>
+            <p>
+              Your companions are safely stored on your machine. Close the app,
+              come back tomorrow — your pets will be waiting exactly where you
+              left them.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+              >
+                <path
+                  d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                ></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+            </div>
+            <h3>Rich HTTP API</h3>
+            <p>
+              Integrate rspets into your own tools and workflows. Clean REST
+              endpoints make it effortless to build custom dashboards or
+              automation.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="care" class="care">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Care Actions</span>
+          <h2 class="section-title">
+            How will you <span class="gradient-text">spend time</span> together?
+          </h2>
+          <p class="section-desc">
+            Every action matters. Watch your choices shape your companion's mood
+            and wellbeing.
+          </p>
+        </div>
+        <div class="care-steps">
+          <div class="care-step">
+            <div class="care-visual">
+              <div class="care-emoji">🍖</div>
+              <div class="care-pulse"></div>
+            </div>
+            <div class="care-content">
+              <h3>Feed</h3>
+              <p>
+                A well-fed pet is a happy pet. Restore their hunger levels and
+                give them a small health boost with every nutritious meal you
+                provide.
+              </p>
+              <code>POST /pets/{id}/feed</code>
+            </div>
+          </div>
+          <div class="care-step">
+            <div class="care-visual">
+              <div class="care-emoji">🎾</div>
+              <div class="care-pulse"></div>
+            </div>
+            <div class="care-content">
+              <h3>Play</h3>
+              <p>
+                Playtime sparks joy. Increase happiness, burn a little energy,
+                and build an unbreakable bond through fun and games.
+              </p>
+              <code>POST /pets/{id}/play</code>
+            </div>
+          </div>
+          <div class="care-step">
+            <div class="care-visual">
+              <div class="care-emoji">🌙</div>
+              <div class="care-pulse"></div>
+            </div>
+            <div class="care-content">
+              <h3>Sleep</h3>
+              <p>
+                Rest is essential for growth. Let your companion nap to recharge
+                their energy and recover precious health points.
+              </p>
+              <code>POST /pets/{id}/sleep</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="adopt" class="adopt">
+      <div class="container">
+        <div class="adopt-card">
+          <div class="adopt-content">
+            <h2>Ready to meet your new best friend?</h2>
+            <p>
+              Adopting a companion is as simple as a single API call. Give them
+              a name, choose a species, and watch your digital family grow.
+            </p>
+            <div class="code-block">
+              <div class="code-header">
+                <span class="code-dot red"></span>
+                <span class="code-dot yellow"></span>
+                <span class="code-dot green"></span>
+                <span class="code-lang">shell</span>
+              </div>
+              <pre><code>curl -X POST http://localhost:3000/pets \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Momo","species":"cat"}'</code></pre>
+            </div>
+            <a
+              href="https://github.com/ktiays/rshell"
+              target="_blank"
+              rel="noopener"
+              class="btn btn-primary"
+              >View on GitHub</a
+            >
+          </div>
+          <div class="adopt-art">
+            <div class="floating-pets">
+              <div class="float-pet pet-1">🐱</div>
+              <div class="float-pet pet-2">🐶</div>
+              <div class="float-pet pet-3">🐰</div>
+              <div class="float-pet pet-4">🦊</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-top">
+          <a href="#" class="logo">
+            <span class="logo-icon">🐾</span>
+            <span class="logo-text">rspets</span>
+          </a>
+          <p class="footer-tagline">A little care goes a long way.</p>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2026 rspets. Built with warmth.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>
