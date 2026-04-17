@@ -42,6 +42,9 @@ print_tip() {
     echo ""
     echo "Next steps:"
     echo "  1. Create your configuration file in ~/.rspets/"
+    echo "     Example ~/.rspets/config.toml:"
+    echo "       session_id = \"my-sanctuary\""
+    echo "       pet_server_port = 3000"
     if [ "$(uname -s)" = "Darwin" ]; then
         echo "  2. Run the following command to start rspets at login:"
         echo "     launchctl load -w ~/Library/LaunchAgents/me.ktiays.rspets.plist"
