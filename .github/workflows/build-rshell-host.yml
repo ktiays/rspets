@@ -16,6 +16,10 @@ jobs:
         run: |
           SHA=$(curl -s -H "Authorization: Bearer ${{ secrets.RSHELL_PAT }}" \
             https://api.github.com/repos/ktiays/rshell/commits/main | jq -r '.sha')
+          if [ "$SHA" = "null" ] || [ -z "$SHA" ]; then
+            echo "Failed to fetch rshell commit SHA. Check RSHELL_PAT permissions." >&2
+            exit 1
+          fi
           echo "sha=$SHA" >> "$GITHUB_OUTPUT"
 
       - id: diff
