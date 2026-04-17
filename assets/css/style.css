@@ -247,6 +247,11 @@ body {
     margin-bottom: 64px;
 }
 
+.hero-install {
+    max-width: 640px;
+    margin: 0 auto 64px;
+}
+
 .btn {
     display: inline-flex;
     align-items: center;
@@ -624,6 +629,34 @@ section {
     font-size: 0.75rem;
     color: #a29e99;
     font-weight: 500;
+}
+
+.copy-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 12px;
+    padding: 4px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #a29e99;
+    transition: color 0.2s ease, background 0.2s ease;
+}
+
+.copy-btn:hover {
+    color: #f5f2ef;
+    background: rgba(255,255,255,0.08);
+}
+
+.copy-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.copy-btn.copied {
+    color: #28c840;
 }
 
 .code-block pre {

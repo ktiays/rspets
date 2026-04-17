@@ -1,0 +1,113 @@
+name: Build and Release rshell-host
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.diff.outputs.changed }}
+      rshell_sha: ${{ steps.rshell.outputs.sha }}
+    steps:
+      - id: rshell
+        run: |
+          SHA=$(curl -s -H "Authorization: Bearer ${{ secrets.RSHELL_PAT }}" \
+            https://api.github.com/repos/ktiays/rshell/commits/main | jq -r '.sha')
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+
+      - id: diff
+        run: |
+          ASSET_URL=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            https://api.github.com/repos/${{ github.repository }}/releases/latest \
+            | jq -r '.assets[]? | select(.name == "rshell-commit.txt") | .url // empty')
+
+          LAST_SHA=""
+          if [ -n "$ASSET_URL" ]; then
+            LAST_SHA=$(curl -sL -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Accept: application/octet-stream" "$ASSET_URL" || true)
+          fi
+
+          if [ "$LAST_SHA" = "${{ steps.rshell.outputs.sha }}" ] && [ -n "$LAST_SHA" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    needs: check
+    if: needs.check.outputs.changed == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+          - os: macos-latest
+            target: aarch64-apple-darwin
+          - os: macos-13
+            target: x86_64-apple-darwin
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: ktiays/rshell
+          token: ${{ secrets.RSHELL_PAT }}
+          path: rshell
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - if: matrix.target == 'aarch64-unknown-linux-gnu'
+        run: sudo apt-get update && sudo apt-get install -y gcc-aarch64-linux-gnu
+
+      - env:
+          CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: aarch64-linux-gnu-gcc
+        working-directory: rshell
+        run: cargo build --release --package rshell-host --target ${{ matrix.target }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rshell-host-${{ matrix.target }}
+          path: |
+            rshell/target/${{ matrix.target }}/release/rshell-host
+
+  release:
+    needs: [check, build]
+    if: needs.check.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: rshell-host-*
+          merge-multiple: false
+
+      - name: Rename artifacts
+        run: |
+          for dir in artifacts/rshell-host-*; do
+            target=$(basename "$dir" | sed 's/^rshell-host-//')
+            if [ -f "$dir/rshell-host" ]; then
+              mv "$dir/rshell-host" "$dir/rspets-$target"
+            fi
+
+          done
+
+      - run: echo "${{ needs.check.outputs.rshell_sha }}" > rshell-commit.txt
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: rshell-${{ needs.check.outputs.rshell_sha }}
+          name: Release rshell-${{ needs.check.outputs.rshell_sha }}
+          files: |
+            artifacts/rshell-host-*/*
+            rshell-commit.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
