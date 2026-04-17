@@ -15,8 +15,8 @@ get_target() {
     case "$os" in
         Darwin)
             case "$arch" in
-                x86_64) echo "x86_64-apple-darwin" ;;
                 arm64)  echo "aarch64-apple-darwin" ;;
+                x86_64) echo "x86_64 macOS is not supported. Please use an Apple Silicon Mac or Linux." >&2; exit 1 ;;
                 *)      echo "Unsupported macOS architecture: $arch" >&2; exit 1 ;;
             esac
             ;;
