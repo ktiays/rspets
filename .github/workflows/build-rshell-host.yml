@@ -51,10 +51,20 @@ jobs:
             target: aarch64-apple-darwin
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Verify rshell access
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer ${{ secrets.RSHELL_PAT }}" https://api.github.com/repos/ktiays/rshell)
+          echo "API status for ktiays/rshell: $STATUS"
+          if [ "$STATUS" != "200" ]; then
+            echo "RSHELL_PAT cannot access ktiays/rshell. Make sure it is a classic PAT with 'repo' scope." >&2
+            exit 1
+          fi
+
       - uses: actions/checkout@v4
         with:
           repository: ktiays/rshell
           token: ${{ secrets.RSHELL_PAT }}
+          ref: main
           path: rshell
 
       - uses: dtolnay/rust-toolchain@stable
