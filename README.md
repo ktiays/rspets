@@ -53,6 +53,22 @@ To uninstall:
 curl -sL https://raw.githubusercontent.com/ktiays/rspets/main/install.sh | bash -s -- uninstall
 ```
 
+## Configuration
+
+After installation, create your configuration file in the `~/.rspets/` directory.
+
+Then start rspets at login:
+
+- **macOS:**
+  ```bash
+  launchctl load -w ~/Library/LaunchAgents/me.ktiays.rspets.plist
+  ```
+
+- **Linux:**
+  ```bash
+  systemctl --user enable --now rspets
+  ```
+
 ---
 
 ## License

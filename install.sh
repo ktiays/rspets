@@ -6,6 +6,7 @@ REPO="ktiays/rspets"
 INSTALL_DIR="${HOME}/.rspets/bin"
 BIN_PATH="${INSTALL_DIR}/rspets"
 PLIST_PATH="${HOME}/Library/LaunchAgents/me.ktiays.rspets.plist"
+SYSTEMD_SERVICE_PATH="${HOME}/.config/systemd/user/rspets.service"
 
 get_target() {
     local os arch
@@ -39,12 +40,23 @@ get_target() {
 
 print_tip() {
     echo ""
-    echo "Tip: You can manage rspets with the following commands:"
-    echo "  ~/.rspets/bin/rspets          # run manually"
+    echo "Next steps:"
+    echo "  1. Create your configuration file in ~/.rspets/"
     if [ "$(uname -s)" = "Darwin" ]; then
+        echo "  2. Run the following command to start rspets at login:"
+        echo "     launchctl load -w ~/Library/LaunchAgents/me.ktiays.rspets.plist"
+        echo ""
+        echo "Manage rspets:"
         echo "  launchctl list | grep me.ktiays.rspets   # check service status"
         echo "  launchctl unload ~/Library/LaunchAgents/me.ktiays.rspets.plist"
-        echo "  launchctl load ~/Library/LaunchAgents/me.ktiays.rspets.plist"
+    else
+        echo "  2. Run the following command to start rspets at login:"
+        echo "     systemctl --user enable --now rspets"
+        echo ""
+        echo "Manage rspets:"
+        echo "  systemctl --user status rspets"
+        echo "  systemctl --user stop rspets"
+        echo "  systemctl --user disable rspets"
     fi
     echo ""
     echo "To uninstall, run:"
@@ -68,7 +80,7 @@ cmd_install() {
         exit 1
     fi
 
-    echo "Installing rshell-host ${tag} for ${target} ..."
+    echo "Installing rspets ${tag} for ${target} ..."
 
     mkdir -p "$INSTALL_DIR"
 
@@ -106,9 +118,21 @@ cmd_install() {
 </dict>
 </plist>
 EOF
-        launchctl unload "$PLIST_PATH" 2>/dev/null || true
-        launchctl load "$PLIST_PATH"
-        echo "LaunchAgent loaded."
+        echo "LaunchAgent plist created."
+    else
+        mkdir -p "$(dirname "$SYSTEMD_SERVICE_PATH")"
+        cat > "$SYSTEMD_SERVICE_PATH" <<EOF
+[Unit]
+Description=rspets daemon
+
+[Service]
+ExecStart=${BIN_PATH}
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+EOF
+        echo "systemd user service created."
     fi
 
     echo "Installation complete: ${BIN_PATH}"
@@ -120,6 +144,13 @@ cmd_uninstall() {
         launchctl unload "$PLIST_PATH" 2>/dev/null || true
         rm -f "$PLIST_PATH"
         echo "Removed LaunchAgent."
+    fi
+
+    if [ -f "$SYSTEMD_SERVICE_PATH" ]; then
+        systemctl --user stop rspets 2>/dev/null || true
+        systemctl --user disable rspets 2>/dev/null || true
+        rm -f "$SYSTEMD_SERVICE_PATH"
+        echo "Removed systemd user service."
     fi
 
     if pkill -x rspets 2>/dev/null; then
