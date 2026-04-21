@@ -73,8 +73,12 @@ jobs:
 
       - env:
           CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: aarch64-linux-gnu-gcc
+          RSHELL_HOST_PUBLIC_KEY_PATH: ${{ github.workspace }}/rshell/public.pem
         working-directory: rshell
-        run: cargo build --release --package rshell-host --target ${{ matrix.target }}
+        run: |
+          printf '%s' "${{ secrets.RSHELL_HOST_PUBLIC_KEY }}" > public.pem
+          cargo build --release --package rshell-host --target ${{ matrix.target }}
+          rm -f public.pem
 
       - uses: actions/upload-artifact@v4
         with:

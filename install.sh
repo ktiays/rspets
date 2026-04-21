@@ -73,8 +73,16 @@ get_latest_tag() {
         | cut -d'"' -f4
 }
 
+is_service_running() {
+    if [ "$(uname -s)" = "Darwin" ]; then
+        launchctl list me.ktiays.rspets >/dev/null 2>&1
+    else
+        systemctl --user is-active --quiet rspets 2>/dev/null
+    fi
+}
+
 cmd_install() {
-    local target tag asset_name download_url
+    local target tag asset_name download_url was_running=false is_upgrade=false
     target=$(get_target)
     tag=$(get_latest_tag)
 
@@ -83,7 +91,17 @@ cmd_install() {
         exit 1
     fi
 
-    echo "Installing rspets ${tag} for ${target} ..."
+    if [ -f "$BIN_PATH" ]; then
+        is_upgrade=true
+        echo "Upgrading rspets to ${tag} for ${target} ..."
+    else
+        echo "Installing rspets ${tag} for ${target} ..."
+    fi
+
+    if is_service_running; then
+        was_running=true
+        echo "Service is currently running."
+    fi
 
     mkdir -p "$INSTALL_DIR"
 
@@ -121,7 +139,11 @@ cmd_install() {
 </dict>
 </plist>
 EOF
-        echo "LaunchAgent plist created."
+        if [ "$is_upgrade" = true ]; then
+            echo "LaunchAgent plist updated."
+        else
+            echo "LaunchAgent plist created."
+        fi
     else
         mkdir -p "$(dirname "$SYSTEMD_SERVICE_PATH")"
         cat > "$SYSTEMD_SERVICE_PATH" <<EOF
@@ -135,11 +157,36 @@ Restart=on-failure
 [Install]
 WantedBy=default.target
 EOF
-        echo "systemd user service created."
+        if [ "$is_upgrade" = true ]; then
+            echo "systemd user service updated."
+        else
+            echo "systemd user service created."
+        fi
+    fi
+
+    if [ "$was_running" = true ]; then
+        echo "Restarting service ..."
+        if [ "$(uname -s)" = "Darwin" ]; then
+            launchctl unload "$PLIST_PATH" 2>/dev/null || true
+            launchctl load -w "$PLIST_PATH"
+        else
+            systemctl --user daemon-reload
+            systemctl --user restart rspets
+        fi
+        echo "Service restarted."
     fi
 
     echo "Installation complete: ${BIN_PATH}"
-    print_tip
+
+    if [ "$is_upgrade" = true ]; then
+        echo ""
+        echo "Upgrade complete!"
+        if [ "$was_running" = true ]; then
+            echo "The service has been seamlessly restarted with the new version."
+        fi
+    else
+        print_tip
+    fi
 }
 
 cmd_uninstall() {
