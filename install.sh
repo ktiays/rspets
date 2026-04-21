@@ -214,12 +214,13 @@ cmd_uninstall() {
 }
 
 usage() {
-    echo "Usage: $0 {install|uninstall}"
+    echo "Usage: $0 [install|uninstall]"
+    echo "  install is the default when no command is provided."
     exit 1
 }
 
 case "${1:-}" in
-    install) cmd_install ;;
+    ""|install) cmd_install ;;
     uninstall) cmd_uninstall ;;
     *) usage ;;
 esac
