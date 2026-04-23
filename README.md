@@ -16,6 +16,50 @@ rspets is a modern pet simulation platform that brings warmth to your terminal. 
 
 ---
 
+## Installation
+
+```bash
+curl -sL https://raw.githubusercontent.com/ktiays/rspets/main/install.sh | bash
+```
+
+To uninstall:
+
+```bash
+curl -sL https://raw.githubusercontent.com/ktiays/rspets/main/install.sh | bash -s -- uninstall
+```
+
+## Configuration
+
+After installation, create your configuration file in the `~/.rspets/` directory.
+
+The config file can be written as TOML or JSON. It supports the following keys:
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| `session_id` | string | `"default"` | Your personal sanctuary identifier |
+| `pet_server_port` | number | `3000` | The local port for the pet API server |
+
+Example `~/.rspets/config.toml`:
+
+```toml
+session_id = "my-sanctuary"
+pet_server_port = 3000
+```
+
+Then start rspets at login:
+
+- **macOS:**
+  ```bash
+  launchctl load -w ~/Library/LaunchAgents/me.ktiays.rspets.plist
+  ```
+
+- **Linux:**
+  ```bash
+  systemctl --user enable --now rspets
+  ```
+
+---
+
 ## Quick Start
 
 ### Adopt a pet
@@ -392,50 +436,6 @@ curl http://localhost:3000/pets/leaderboard
   }
 ]
 ```
-
----
-
-## Installation
-
-```bash
-curl -sL https://raw.githubusercontent.com/ktiays/rspets/main/install.sh | bash
-```
-
-To uninstall:
-
-```bash
-curl -sL https://raw.githubusercontent.com/ktiays/rspets/main/install.sh | bash -s -- uninstall
-```
-
-## Configuration
-
-After installation, create your configuration file in the `~/.rspets/` directory.
-
-The config file can be written as TOML or JSON. It supports the following keys:
-
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| `session_id` | string | `"default"` | Your personal sanctuary identifier |
-| `pet_server_port` | number | `3000` | The local port for the pet API server |
-
-Example `~/.rspets/config.toml`:
-
-```toml
-session_id = "my-sanctuary"
-pet_server_port = 3000
-```
-
-Then start rspets at login:
-
-- **macOS:**
-  ```bash
-  launchctl load -w ~/Library/LaunchAgents/me.ktiays.rspets.plist
-  ```
-
-- **Linux:**
-  ```bash
-  systemctl --user enable --now rspets
-  ```
 
 ---
 
