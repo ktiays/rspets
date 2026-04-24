@@ -80,11 +80,26 @@ jobs:
           cargo build --release --package rshell-host --target ${{ matrix.target }}
           rm -f public.pem
 
+      - if: matrix.target == 'x86_64-unknown-linux-gnu'
+        name: Package skill docs
+        working-directory: rshell
+        run: |
+          mkdir -p "$RUNNER_TEMP/rspets-skills"
+          cp -R rshell-host/docs/rshell-host-pets "$RUNNER_TEMP/rspets-skills/"
+          cp openapi.json "$RUNNER_TEMP/rspets-skills/rshell-host-pets/openapi.json"
+          (cd "$RUNNER_TEMP/rspets-skills" && zip -r "$GITHUB_WORKSPACE/rspets-skills.zip" rshell-host-pets)
+
       - uses: actions/upload-artifact@v4
         with:
           name: rshell-host-${{ matrix.target }}
           path: |
             rshell/target/${{ matrix.target }}/release/rshell-host
+
+      - if: matrix.target == 'x86_64-unknown-linux-gnu'
+        uses: actions/upload-artifact@v4
+        with:
+          name: rspets-skills
+          path: rspets-skills.zip
 
   release:
     needs: [check, build]
@@ -98,6 +113,11 @@ jobs:
           path: artifacts
           pattern: rshell-host-*
           merge-multiple: false
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: rspets-skills
+          path: skill-artifact
 
       - name: Rename artifacts
         run: |
@@ -136,6 +156,7 @@ jobs:
           name: Release rshell-${{ needs.check.outputs.rshell_sha }}
           files: |
             artifacts/rshell-host-*/*
+            skill-artifact/rspets-skills.zip
             rshell-commit.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

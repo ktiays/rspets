@@ -5,8 +5,10 @@ set -euo pipefail
 REPO="ktiays/rspets"
 INSTALL_DIR="${HOME}/.rspets/bin"
 BIN_PATH="${INSTALL_DIR}/rspets"
+SKILLS_DIR="${HOME}/.rspets/skills"
 PLIST_PATH="${HOME}/Library/LaunchAgents/me.ktiays.rspets.plist"
 SYSTEMD_SERVICE_PATH="${HOME}/.config/systemd/user/rspets.service"
+SKILLS_ASSET_NAME="rspets-skills.zip"
 
 get_target() {
     local os arch
@@ -82,7 +84,7 @@ is_service_running() {
 }
 
 cmd_install() {
-    local target tag asset_name download_url was_running=false is_upgrade=false
+    local target tag asset_name download_url skills_download_url skills_zip was_running=false is_upgrade=false
     target=$(get_target)
     tag=$(get_latest_tag)
 
@@ -115,6 +117,26 @@ cmd_install() {
     fi
 
     chmod +x "$BIN_PATH"
+
+    if ! command -v unzip >/dev/null 2>&1; then
+        echo "unzip is required to install rspets skills." >&2
+        exit 1
+    fi
+
+    mkdir -p "$SKILLS_DIR"
+    skills_zip=$(mktemp "${TMPDIR:-/tmp}/rspets-skills.XXXXXX")
+    skills_download_url="https://github.com/${REPO}/releases/download/${tag}/${SKILLS_ASSET_NAME}"
+
+    echo "Downloading ${skills_download_url} ..."
+    if ! curl -fsL -o "$skills_zip" "$skills_download_url"; then
+        rm -f "$skills_zip"
+        echo "Failed to download skills package." >&2
+        exit 1
+    fi
+
+    rm -rf "${SKILLS_DIR}/rshell-host-pets"
+    unzip -oq "$skills_zip" -d "$SKILLS_DIR"
+    rm -f "$skills_zip"
 
     if [ "$(uname -s)" = "Darwin" ]; then
         xattr -cr "$BIN_PATH"
@@ -177,6 +199,7 @@ EOF
     fi
 
     echo "Installation complete: ${BIN_PATH}"
+    echo "Skills installed: ${SKILLS_DIR}/rshell-host-pets"
 
     if [ "$is_upgrade" = true ]; then
         echo ""
