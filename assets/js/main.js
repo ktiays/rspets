@@ -29,59 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Mobile navigation
-    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-    const navLinks = document.querySelector('.nav-links');
-
-    const closeMobileMenu = () => {
-        if (!mobileMenuBtn || !navLinks) {
-            return;
-        }
-
-        mobileMenuBtn.classList.remove('active');
-        navLinks.classList.remove('open');
-        mobileMenuBtn.setAttribute('aria-expanded', 'false');
-    };
-
-    if (mobileMenuBtn && navLinks) {
-        mobileMenuBtn.addEventListener('click', () => {
-            const isOpen = navLinks.classList.toggle('open');
-            mobileMenuBtn.classList.toggle('active', isOpen);
-            mobileMenuBtn.setAttribute('aria-expanded', String(isOpen));
-        });
-
-        navLinks.querySelectorAll('a').forEach((link) => {
-            link.addEventListener('click', closeMobileMenu);
-        });
-
-        document.addEventListener('click', (event) => {
-            if (
-                !navLinks.classList.contains('open') ||
-                navLinks.contains(event.target) ||
-                mobileMenuBtn.contains(event.target)
-            ) {
-                return;
-            }
-
-            closeMobileMenu();
-        });
-
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape') {
-                closeMobileMenu();
-            }
-        });
-
-        window.addEventListener('resize', () => {
-            if (window.innerWidth > 720) {
-                closeMobileMenu();
-            }
-        });
-    }
-
     // Navbar background on scroll
     const navbar = document.querySelector('.navbar');
-    let lastScroll = 0;
 
     window.addEventListener('scroll', () => {
         const currentScroll = window.pageYOffset;
@@ -90,7 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             navbar.style.boxShadow = 'none';
         }
-        lastScroll = currentScroll;
     });
 
     // Copy buttons
