@@ -60,6 +60,8 @@ body {
     -webkit-backdrop-filter: blur(16px);
     border-bottom: 1px solid rgba(45, 42, 38, 0.04);
     transition: var(--transition);
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
 }
 
 .nav-container {
@@ -86,6 +88,8 @@ body {
     display: flex;
     list-style: none;
     gap: 32px;
+    position: relative;
+    z-index: 2;
 }
 
 .nav-links a {
@@ -95,6 +99,8 @@ body {
     font-size: 0.95rem;
     transition: var(--transition);
     position: relative;
+    cursor: pointer;
+    z-index: 1;
 }
 
 .nav-links a::after {
@@ -107,6 +113,7 @@ body {
     background: linear-gradient(90deg, var(--primary), var(--primary-light));
     transition: var(--transition);
     border-radius: 2px;
+    pointer-events: none;
 }
 
 .nav-links a:hover {
@@ -700,6 +707,65 @@ section {
 @keyframes floatPet {
     0%, 100% { transform: translateY(0) rotate(0deg); }
     50% { transform: translateY(-16px) rotate(4deg); }
+}
+
+/* Battle Section */
+.battle {
+    background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
+}
+
+.battle-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+}
+
+.battle-card {
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    padding: 32px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(45, 42, 38, 0.04);
+    transition: var(--transition);
+    text-align: center;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+.battle-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+
+.battle-icon {
+    font-size: 2.5rem;
+    margin-bottom: 16px;
+}
+
+.battle-card h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.battle-card p {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+    margin-bottom: 14px;
+}
+
+.battle-card code {
+    display: inline-block;
+    padding: 6px 10px;
+    background: rgba(45, 42, 38, 0.04);
+    border-radius: 8px;
+    font-family: 'SF Mono', Monaco, monospace;
+    font-size: 0.78rem;
+    color: var(--text);
+    word-break: break-all;
+    white-space: normal;
+    max-width: 100%;
 }
 
 /* Footer */
