@@ -1,4 +1,4 @@
-# rspets 🐾
+# rspets 🐾 🐱
 
 Your Digital Companion Sanctuary.
 
