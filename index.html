@@ -3,559 +3,476 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>rspets — Your Digital Companion Sanctuary</title>
+        <title>rspets — Voxel Pet Sanctuary</title>
         <meta
             name="description"
-            content="rspets is a modern pet simulation platform. Adopt, care for, battle, and bond with your virtual companions through a beautiful HTTP API."
+            content="rspets is a pet simulation HTTP API. Roll a gacha, raise 20 voxel species across 8 elements, and battle them turn by turn — by hand or with a single auto-battle call."
         />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
-            href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap"
             rel="stylesheet"
         />
         <link rel="stylesheet" href="assets/css/style.css" />
     </head>
     <body>
-        <nav class="navbar">
-            <div class="container nav-container">
-                <a href="#" class="logo">
-                    <span class="logo-icon">🐾</span>
-                    <span class="logo-text">rspets</span>
-                </a>
+        <div class="sky" aria-hidden="true"></div>
+
+        <nav class="nav">
+            <div class="wrap nav-in">
+                <a href="#top" class="logo"><span class="logo-cube"></span>rspets</a>
                 <ul class="nav-links">
+                    <li><a href="#dex">Pets</a></li>
+                    <li><a href="#elements">Elements</a></li>
+                    <li><a href="#gacha">Gacha</a></li>
+                    <li><a href="#care">Care</a></li>
+                    <li><a href="#battle">Battle</a></li>
+                    <li><a href="#api">API</a></li>
                     <li>
-                        <a
-                            href="https://github.com/ktiays/rspets"
-                            target="_blank"
-                            rel="noopener"
-                            >GitHub</a
-                        >
+                        <a href="https://github.com/ktiays/rspets" target="_blank" rel="noopener">GitHub</a>
                     </li>
                 </ul>
             </div>
         </nav>
 
-        <header class="hero">
-            <div class="hero-bg">
-                <div class="blob blob-1"></div>
-                <div class="blob blob-2"></div>
-                <div class="blob blob-3"></div>
-            </div>
-            <div class="container hero-content">
-                <div class="hero-badge">✨ Welcome to the Sanctuary</div>
-                <h1 class="hero-title">
-                    Care for digital companions<br />
-                    <span class="gradient-text">one API call at a time</span>
-                </h1>
-                <p class="hero-subtitle">
-                    rspets is a modern pet simulation platform that brings
-                    warmth to your terminal. Adopt unique companions through
-                    gacha, nurture them with care, train them for battle, and
-                    watch their happiness grow.
-                </p>
-                <div class="hero-cta">
-                    <a href="#adopt" class="btn btn-primary"
-                        >Adopt Your First Pet</a
-                    >
-                    <a href="#features" class="btn btn-secondary"
-                        >Explore Features</a
-                    >
-                </div>
-                <div class="hero-install">
-                    <div class="code-block">
-                        <div class="code-header">
-                            <span class="code-dot red"></span>
-                            <span class="code-dot yellow"></span>
-                            <span class="code-dot green"></span>
-                            <span class="code-lang">shell</span>
+        <!-- HERO -->
+        <header class="hero" id="top">
+            <div class="wrap hero-grid">
+                <div class="hero-copy">
+                    <p class="eyebrow">▶ PLAYER 1 READY</p>
+                    <h1 class="hero-title">
+                        Raise <em>voxel pets</em><br />
+                        through an <em>HTTP API</em>
+                    </h1>
+                    <p class="lead">
+                        20 species, 8 elements, 4 rarities. Roll a gacha, keep them fed and happy, teach them skills
+                        and send them into turn-based battles — from a terminal, a script, or your AI agent.
+                    </p>
+                    <div class="cta">
+                        <a href="#dex" class="btn btn-primary">Meet the pets</a>
+                        <a href="#start" class="btn">Install</a>
+                    </div>
+                    <div class="term" id="heroTerm">
+                        <div class="term-bar"><i></i><i></i><i></i><span>bash</span></div>
+                        <div class="term-body">
+                            <code>curl -sL https://raw.githubusercontent.com/ktiays/rspets/main/install.sh | bash</code>
                             <button
-                                class="copy-btn"
-                                aria-label="Copy"
+                                class="copy"
                                 data-copy="curl -sL https://raw.githubusercontent.com/ktiays/rspets/main/install.sh | bash"
                             >
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1.5"
-                                >
-                                    <rect
-                                        x="9"
-                                        y="9"
-                                        width="13"
-                                        height="13"
-                                        rx="2"
-                                        ry="2"
-                                    ></rect>
-                                    <path
-                                        d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
-                                    ></path>
-                                </svg>
+                                COPY
                             </button>
                         </div>
-                        <pre><code>curl -sL https://raw.githubusercontent.com/ktiays/rspets/main/install.sh | bash</code></pre>
                     </div>
+                    <dl class="hero-stats">
+                        <div><dt>20</dt><dd>species</dd></div>
+                        <div><dt>8</dt><dd>elements</dd></div>
+                        <div><dt>23</dt><dd>skills</dd></div>
+                        <div><dt>7</dt><dd>care actions</dd></div>
+                    </dl>
                 </div>
-                <div class="hero-stats">
-                    <div class="stat-item">
-                        <div class="stat-value">20+</div>
-                        <div class="stat-label">Species Templates</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">8</div>
-                        <div class="stat-label">Battle Elements</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value">∞</div>
-                        <div class="stat-label">Happiness Potential</div>
-                    </div>
+                <div class="hero-stage panel">
+                    <canvas id="heroCanvas"></canvas>
+                    <div class="hero-tag" id="heroTag"></div>
+                    <button class="stage-nav prev" id="heroPrev" aria-label="Previous pet">◀</button>
+                    <button class="stage-nav next" id="heroNext" aria-label="Next pet">▶</button>
                 </div>
             </div>
         </header>
 
-        <section class="pets-showcase">
-            <div class="container">
-                <div class="pets-marquee">
-                    <div class="pets-track">
-                        <div class="pet-card">
-                            <div class="pet-avatar">🔥</div>
-                            <div class="pet-name">Ember Cat</div>
-                            <div class="pet-species">Fire · Common</div>
-                        </div>
-                        <div class="pet-card">
-                            <div class="pet-avatar">💧</div>
-                            <div class="pet-name">Droplet Mouse</div>
-                            <div class="pet-species">Water · Common</div>
-                        </div>
-                        <div class="pet-card">
-                            <div class="pet-avatar">🌿</div>
-                            <div class="pet-name">Leafblade Hare</div>
-                            <div class="pet-species">Grass · Common</div>
-                        </div>
-                        <div class="pet-card">
-                            <div class="pet-avatar">⚡</div>
-                            <div class="pet-name">Volt Fox</div>
-                            <div class="pet-species">Electric · Common</div>
-                        </div>
-                        <div class="pet-card">
-                            <div class="pet-avatar">❄️</div>
-                            <div class="pet-name">Frost Wolf</div>
-                            <div class="pet-species">Ice · Common</div>
-                        </div>
-                        <div class="pet-card">
-                            <div class="pet-avatar">🌪️</div>
-                            <div class="pet-name">Gale Bird</div>
-                            <div class="pet-species">Flying · Common</div>
-                        </div>
-                        <!-- duplicated for seamless loop -->
-                        <div class="pet-card">
-                            <div class="pet-avatar">🔥</div>
-                            <div class="pet-name">Ember Cat</div>
-                            <div class="pet-species">Fire · Common</div>
-                        </div>
-                        <div class="pet-card">
-                            <div class="pet-avatar">💧</div>
-                            <div class="pet-name">Droplet Mouse</div>
-                            <div class="pet-species">Water · Common</div>
-                        </div>
-                        <div class="pet-card">
-                            <div class="pet-avatar">🌿</div>
-                            <div class="pet-name">Leafblade Hare</div>
-                            <div class="pet-species">Grass · Common</div>
-                        </div>
-                        <div class="pet-card">
-                            <div class="pet-avatar">⚡</div>
-                            <div class="pet-name">Volt Fox</div>
-                            <div class="pet-species">Electric · Common</div>
-                        </div>
-                        <div class="pet-card">
-                            <div class="pet-avatar">❄️</div>
-                            <div class="pet-name">Frost Wolf</div>
-                            <div class="pet-species">Ice · Common</div>
-                        </div>
-                        <div class="pet-card">
-                            <div class="pet-avatar">🌪️</div>
-                            <div class="pet-name">Gale Bird</div>
-                            <div class="pet-species">Flying · Common</div>
-                        </div>
-                    </div>
+        <!-- OVERVIEW -->
+        <section class="band" id="system">
+            <div class="wrap">
+                <div class="sec-head">
+                    <span class="sec-no">00</span>
+                    <h2>The whole loop</h2>
+                    <p>Everything in rspets hangs off one loop. Each block below is a playable demo further down the page.</p>
                 </div>
+                <ol class="loop">
+                    <li><a href="#gacha"><b>1</b><span>Gacha</span><small>roll a pet</small></a></li>
+                    <li><a href="#care"><b>2</b><span>Care</span><small>feed · play · sleep</small></a></li>
+                    <li><a href="#care"><b>3</b><span>Level up</span><small>XP → skills</small></a></li>
+                    <li><a href="#battle"><b>4</b><span>Battle</span><small>manual or auto</small></a></li>
+                    <li><a href="#records"><b>5</b><span>Records</span><small>win rate · ranks</small></a></li>
+                </ol>
             </div>
         </section>
 
-        <section id="features" class="features">
-            <div class="container">
-                <div class="section-header">
-                    <span class="section-tag">Features</span>
-                    <h2 class="section-title">
-                        Everything you need to
-                        <span class="gradient-text">care deeply</span>
-                    </h2>
-                    <p class="section-desc">
-                        A thoughtfully designed simulation focused on the joy of
-                        nurturing digital life — now with battles, skills, and
-                        elemental types.
+        <!-- PET DEX -->
+        <section class="band" id="dex">
+            <div class="wrap">
+                <div class="sec-head">
+                    <span class="sec-no">01</span>
+                    <h2>Pet Dex</h2>
+                    <p>
+                        Every species has an element, a rarity, six base stats and a skill pool. Pick one to spin it
+                        around, scrub its level and see the real stat formula at work.
                     </p>
                 </div>
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.5"
-                            >
-                                <path
-                                    d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
-                                ></path>
-                                <circle cx="12" cy="7" r="4"></circle>
-                            </svg>
+                <div class="filters" id="dexFilters"></div>
+                <div class="dex">
+                    <div class="dex-grid" id="dexGrid"></div>
+                    <div class="dex-detail panel" id="dexDetail">
+                        <div class="dex-view">
+                            <canvas id="dexCanvas"></canvas>
                         </div>
-                        <h3>Gacha Adoption</h3>
-                        <p>
-                            Roll for pets backed by species templates. Each has
-                            an element, rarity, and unique battle stats. First
-                            roll is free!
-                        </p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.5"
-                            >
-                                <path
-                                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-                                ></path>
-                            </svg>
-                        </div>
-                        <h3>Health Tracking</h3>
-                        <p>
-                            Monitor hunger, happiness, energy, health, and
-                            cleanliness in real time. Every pet has unique
-                            needs, and attentive care keeps them thriving.
-                        </p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.5"
-                            >
-                                <polygon
-                                    points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"
-                                ></polygon>
-                            </svg>
-                        </div>
-                        <h3>Skill System</h3>
-                        <p>
-                            Pets automatically learn skills as they level up.
-                            Equip up to 4 skills for battle — physical, special,
-                            or status moves with elemental types.
-                        </p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.5"
-                            >
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <line x1="12" y1="8" x2="12" y2="12"></line>
-                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                            </svg>
-                        </div>
-                        <h3>Turn-Based Battles</h3>
-                        <p>
-                            Pit your pets against each other in 1v1 combat.
-                            Elemental matchups, status conditions, stat stages,
-                            and critical hits make every battle unique.
-                        </p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.5"
-                            >
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <polyline points="12 6 12 12 16 14"></polyline>
-                            </svg>
-                        </div>
-                        <h3>Persistent Memories</h3>
-                        <p>
-                            Your companions are safely stored in SQLite. Close
-                            the app, come back tomorrow — your pets will be
-                            waiting exactly where you left them.
-                        </p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.5"
-                            >
-                                <path
-                                    d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
-                                ></path>
-                                <polyline points="14 2 14 8 20 8"></polyline>
-                                <line x1="16" y1="13" x2="8" y2="13"></line>
-                                <line x1="16" y1="17" x2="8" y2="17"></line>
-                                <polyline points="10 9 9 9 8 9"></polyline>
-                            </svg>
-                        </div>
-                        <h3>Rich HTTP API</h3>
-                        <p>
-                            Integrate rspets into your own tools and workflows.
-                            Clean REST endpoints make it effortless to build
-                            custom dashboards or automation.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="care" class="care">
-            <div class="container">
-                <div class="section-header">
-                    <span class="section-tag">Care Actions</span>
-                    <h2 class="section-title">
-                        How will you
-                        <span class="gradient-text">spend time</span> together?
-                    </h2>
-                    <p class="section-desc">
-                        Every action matters. Watch your choices shape your
-                        companion's mood and wellbeing. Train them, explore with
-                        them, and keep them healthy.
-                    </p>
-                </div>
-                <div class="care-steps">
-                    <div class="care-step">
-                        <div class="care-visual">
-                            <div class="care-emoji">🍖</div>
-                            <div class="care-pulse"></div>
-                        </div>
-                        <div class="care-content">
-                            <h3>Feed</h3>
-                            <p>
-                                A well-fed pet is a happy pet. Restore their
-                                hunger levels and give them a small health boost
-                                with every nutritious meal you provide.
-                            </p>
-                            <code>POST /pets/{id}/feed</code>
-                        </div>
-                    </div>
-                    <div class="care-step">
-                        <div class="care-visual">
-                            <div class="care-emoji">🎾</div>
-                            <div class="care-pulse"></div>
-                        </div>
-                        <div class="care-content">
-                            <h3>Play</h3>
-                            <p>
-                                Playtime sparks joy. Increase happiness, burn a
-                                little energy, and build an unbreakable bond
-                                through fun and games.
-                            </p>
-                            <code>POST /pets/{id}/play</code>
-                        </div>
-                    </div>
-                    <div class="care-step">
-                        <div class="care-visual">
-                            <div class="care-emoji">🌙</div>
-                            <div class="care-pulse"></div>
-                        </div>
-                        <div class="care-content">
-                            <h3>Sleep</h3>
-                            <p>
-                                Rest is essential for growth. Let your companion
-                                nap to recharge their energy and recover
-                                precious health points.
-                            </p>
-                            <code>POST /pets/{id}/sleep</code>
-                        </div>
-                    </div>
-                    <div class="care-step">
-                        <div class="care-visual">
-                            <div class="care-emoji">🛁</div>
-                            <div class="care-pulse"></div>
-                        </div>
-                        <div class="care-content">
-                            <h3>Groom</h3>
-                            <p>
-                                Keep your companion spotless. Grooming restores
-                                cleanliness, boosts happiness, and earns a
-                                little experience.
-                            </p>
-                            <code>POST /pets/{id}/groom</code>
-                        </div>
-                    </div>
-                    <div class="care-step">
-                        <div class="care-visual">
-                            <div class="care-emoji">🏋️</div>
-                            <div class="care-pulse"></div>
-                        </div>
-                        <div class="care-content">
-                            <h3>Train</h3>
-                            <p>
-                                Push your pet to learn new skills. Training
-                                costs energy but rewards valuable experience
-                                points that lead to level-ups.
-                            </p>
-                            <code>POST /pets/{id}/train</code>
-                        </div>
-                    </div>
-                    <div class="care-step">
-                        <div class="care-visual">
-                            <div class="care-emoji">🗺️</div>
-                            <div class="care-pulse"></div>
-                        </div>
-                        <div class="care-content">
-                            <h3>Explore</h3>
-                            <p>
-                                Send your pet on a random adventure. They might
-                                find hidden trails, learn from the trip, or come
-                                back with a few scrapes.
-                            </p>
-                            <code>POST /pets/{id}/explore</code>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="battle" class="battle">
-            <div class="container">
-                <div class="section-header">
-                    <span class="section-tag">Battle System</span>
-                    <h2 class="section-title">
-                        Test your pets in
-                        <span class="gradient-text">turn-based combat</span>
-                    </h2>
-                    <p class="section-desc">
-                        Pit your companions against each other. Elemental
-                        matchups, status effects, and strategic skill choices
-                        determine the victor.
-                    </p>
-                </div>
-                <div class="battle-grid">
-                    <div class="battle-card">
-                        <div class="battle-icon">⚔️</div>
-                        <h3>1v1 Combat</h3>
-                        <p>
-                            Two pets enter, one leaves victorious. Each turn,
-                            both sides select a skill. Speed determines action
-                            order.
-                        </p>
-                        <code>POST /battles</code>
-                    </div>
-                    <div class="battle-card">
-                        <div class="battle-icon">🔥</div>
-                        <h3>Elemental Types</h3>
-                        <p>
-                            Fire beats Grass, Water beats Fire, Electric hits
-                            Flying hard. Master the type chart to dominate the
-                            arena.
-                        </p>
-                        <code>GET /pets/{id}/status</code>
-                    </div>
-                    <div class="battle-card">
-                        <div class="battle-icon">✨</div>
-                        <h3>Skills & Stages</h3>
-                        <p>
-                            Equip up to 4 skills per pet. Physical, special, and
-                            status moves can inflict poison, burn, paralysis, or
-                            freeze.
-                        </p>
-                        <code>PATCH /pets/{id}/skills/equipment</code>
-                    </div>
-                    <div class="battle-card">
-                        <div class="battle-icon">🏆</div>
-                        <h3>Rewards</h3>
-                        <p>
-                            Winners earn experience, Pet Coins, and EV gains.
-                            Losers still walk away with a little growth.
-                        </p>
-                        <code>POST /battles/{id}/turn</code>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="adopt" class="adopt">
-            <div class="container">
-                <div class="adopt-card">
-                    <div class="adopt-content">
-                        <h2>Ready to meet your new best friend?</h2>
-                        <p>
-                            Start by creating a user, then roll the gacha to
-                            bring home a companion. Your first roll is always
-                            free.
-                        </p>
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span class="code-dot red"></span>
-                                <span class="code-dot yellow"></span>
-                                <span class="code-dot green"></span>
-                                <span class="code-lang">shell</span>
+                        <div class="dex-info">
+                            <div class="dex-title">
+                                <h3 id="dexName"></h3>
+                                <span class="tags" id="dexTags"></span>
                             </div>
-                            <pre><code># Create a user
-curl -X POST http://localhost:3000/users \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Alice"}'
-
-# Roll your first pet (free!)
-curl -X POST http://localhost:3000/pets/gacha \
-  -H "Content-Type: application/json" \
-  -d '{"user_id":"&lt;user-id&gt;"}'</code></pre>
+                            <p class="dex-desc" id="dexDesc"></p>
+                            <div class="lvl">
+                                <label for="dexLevel">LEVEL <b id="dexLevelVal">10</b></label>
+                                <input type="range" id="dexLevel" min="1" max="50" value="10" />
+                            </div>
+                            <div class="stats" id="dexStats"></div>
                         </div>
-                        <a
-                            href="https://github.com/ktiays/rspets"
-                            target="_blank"
-                            rel="noopener"
-                            class="btn btn-primary"
-                            >View on GitHub</a
-                        >
+                        <div class="dex-skills">
+                            <h4>Skill pool <small>learned automatically at the level shown</small></h4>
+                            <ul id="dexSkills"></ul>
+                        </div>
                     </div>
-                    <div class="adopt-art">
-                        <div class="floating-pets">
-                            <div class="float-pet pet-1">🔥</div>
-                            <div class="float-pet pet-2">💧</div>
-                            <div class="float-pet pet-3">🌿</div>
-                            <div class="float-pet pet-4">⚡</div>
+                </div>
+                <div class="rarity-row" id="rarityRow"></div>
+            </div>
+        </section>
+
+        <!-- ELEMENTS -->
+        <section class="band alt" id="elements">
+            <div class="wrap">
+                <div class="sec-head">
+                    <span class="sec-no">02</span>
+                    <h2>Elements &amp; matchups</h2>
+                    <p>
+                        Eight elements, one type chart. Hit a weakness for <b>2×</b>, a resistance for <b>½×</b>, and
+                        some pairs do nothing at all. Skills matching the user's own element also get
+                        <b>STAB&nbsp;1.5×</b>.
+                    </p>
+                </div>
+                <div class="chart-wrap">
+                    <div class="chart panel" id="chart"></div>
+                    <div class="chart-side panel" id="chartSide"></div>
+                </div>
+                <div class="skill-cats">
+                    <div class="cat panel"><span class="cat-ico phy"></span><b>Physical</b><p>Uses ATK vs the target's DEF.</p></div>
+                    <div class="cat panel"><span class="cat-ico spe"></span><b>Special</b><p>Uses SPA vs the target's SPD.</p></div>
+                    <div class="cat panel"><span class="cat-ico sta"></span><b>Status</b><p>No damage. Raises your stats by one stage.</p></div>
+                    <div class="cat panel"><span class="cat-ico fx"></span><b>Effects</b><p>Burn · Poison · Paralysis · Freeze, and ±1 stage debuffs.</p></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GACHA -->
+        <section class="band" id="gacha">
+            <div class="wrap">
+                <div class="sec-head">
+                    <span class="sec-no">03</span>
+                    <h2>Gacha</h2>
+                    <p>
+                        <code>POST /pets/gacha</code> is the only way to get a pet. The first roll is free, later rolls
+                        cost 50 Pet Coins, and duplicates turn into 10 coins. This runs the real odds, locally.
+                    </p>
+                </div>
+                <div class="gacha">
+                    <div class="gacha-machine panel">
+                        <div class="gacha-stage">
+                            <canvas id="gachaCanvas"></canvas>
+                            <div class="gacha-msg" id="gachaMsg">Press ROLL to hatch your first pet — it's free.</div>
+                        </div>
+                        <div class="gacha-hud">
+                            <div class="coins"><span class="coin"></span><b id="coins">0</b> Pet Coins</div>
+                            <div class="pity">
+                                <div class="pity-label">PITY <b id="pityVal">0</b>/30</div>
+                                <div class="bar"><i id="pityBar"></i></div>
+                            </div>
+                        </div>
+                        <div class="gacha-actions">
+                            <button class="btn btn-primary big" id="rollBtn">ROLL <small id="rollCost">FREE</small></button>
+                            <button class="btn small" id="topupBtn" title="Demo only">+500 demo coins</button>
+                        </div>
+                    </div>
+                    <div class="gacha-side">
+                        <div class="panel odds">
+                            <h4>Rarity odds</h4>
+                            <div class="odds-row" data-r="common"><span>Common</span><div class="bar"><i style="width: 60%"></i></div><b>60%</b></div>
+                            <div class="odds-row" data-r="rare"><span>Rare</span><div class="bar"><i style="width: 25%"></i></div><b>25%</b></div>
+                            <div class="odds-row" data-r="epic"><span>Epic</span><div class="bar"><i style="width: 12%"></i></div><b>12%</b></div>
+                            <div class="odds-row" data-r="legendary"><span>Legend</span><div class="bar"><i style="width: 3%"></i></div><b>3%</b></div>
+                            <p class="fine">
+                                After 30 rolls without an Epic or better, the next roll is guaranteed Epic+ (20% of
+                                those are Legendary). A rarity picks one of its species at random.
+                            </p>
+                        </div>
+                        <div class="panel collection">
+                            <h4>Collection <small id="collCount">0 / 20</small></h4>
+                            <div class="coll-grid" id="collGrid"></div>
+                            <p class="fine">Max 15 pets per user · 10-minute gacha cooldown (skipped in this demo).</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <footer class="footer">
-            <div class="container">
-                <div class="footer-top">
-                    <a href="#" class="logo">
-                        <span class="logo-icon">🐾</span>
-                        <span class="logo-text">rspets</span>
-                    </a>
-                    <p class="footer-tagline">A little care goes a long way.</p>
+        <!-- CARE -->
+        <section class="band alt" id="care">
+            <div class="wrap">
+                <div class="sec-head">
+                    <span class="sec-no">04</span>
+                    <h2>Care &amp; growth</h2>
+                    <p>
+                        Five needs slowly decay. Seven actions restore them, earn XP and hit cooldowns. Ask
+                        <code>GET /pets/{id}/next-actions</code> and the server tells you what to do next — try it on the
+                        right. <em>Demo clock: 1 second = 1 minute.</em>
+                    </p>
                 </div>
-                <div class="footer-bottom">
-                    <p>&copy; 2026 rspets. Built with warmth.</p>
+                <div class="care">
+                    <div class="care-pet panel">
+                        <div class="care-picker">
+                            <label for="carePick">PET</label>
+                            <select id="carePick"></select>
+                        </div>
+                        <div class="care-stage">
+                            <canvas id="careCanvas"></canvas>
+                            <div class="mood" id="careMood"></div>
+                        </div>
+                        <div class="needs" id="careNeeds"></div>
+                        <div class="xp">
+                            <div class="xp-label">LV <b id="careLv">1</b> <span id="careXp"></span></div>
+                            <div class="bar xpbar"><i id="careXpBar"></i></div>
+                        </div>
+                        <div class="care-actions" id="careActions"></div>
+                        <p class="care-log" id="careLog">Hover an action to see what it does.</p>
+                    </div>
+                    <div class="care-next panel">
+                        <div class="code-head"><span>GET /pets/{id}/next-actions</span><em id="careLive">live</em></div>
+                        <div class="next-sugg" id="nextSugg"></div>
+                        <ul class="next-list" id="nextList"></ul>
+                        <div class="next-battle" id="nextBattle"></div>
+                        <div class="rule-grid">
+                            <div><b>Decay / hour</b><span>hunger −3 · happiness −2 · cleanliness −2 · energy +10</span></div>
+                            <div><b>XP to next level</b><span>level × 100</span></div>
+                            <div><b>Daily XP cap</b><span>300 per pet</span></div>
+                            <div><b>Global cooldown</b><span>2 min between any two actions</span></div>
+                        </div>
+                    </div>
                 </div>
+            </div>
+        </section>
+
+        <!-- BATTLE -->
+        <section class="band" id="battle">
+            <div class="wrap">
+                <div class="sec-head">
+                    <span class="sec-no">05</span>
+                    <h2>Battle arena</h2>
+                    <p>
+                        1v1, turn-based. Faster pet moves first, damage uses the real formula (level, power, ATK/DEF,
+                        STAB, type chart, crits, ±15% roll). Fight it by hand with
+                        <code>POST /battles/{id}/turn</code> or let the server play it with
+                        <code>POST /battles/{id}/auto</code>.
+                    </p>
+                </div>
+                <div class="arena panel">
+                    <div class="arena-pick">
+                        <div class="pick">
+                            <label for="bA">CHALLENGER</label>
+                            <select id="bA"></select>
+                            <label for="bAL">LV <b id="bALv">15</b></label>
+                            <input type="range" id="bAL" min="1" max="50" value="15" />
+                        </div>
+                        <div class="vs">VS</div>
+                        <div class="pick">
+                            <label for="bB">DEFENDER</label>
+                            <select id="bB"></select>
+                            <label for="bBL">LV <b id="bBLv">15</b></label>
+                            <input type="range" id="bBL" min="1" max="50" value="15" />
+                        </div>
+                    </div>
+                    <div class="arena-view">
+                        <canvas id="battleCanvas"></canvas>
+                        <div class="hud hud-a" id="hudA"></div>
+                        <div class="hud hud-b" id="hudB"></div>
+                        <div class="float-layer" id="floatLayer"></div>
+                        <div class="banner" id="banner"></div>
+                    </div>
+                    <div class="arena-ctrl">
+                        <div class="mode">
+                            <button class="btn small" id="bStart">⚔ New battle</button>
+                            <button class="btn btn-primary small" id="bAuto" disabled>⚡ Auto ( /auto )</button>
+                        </div>
+                        <div class="moves" id="moves"></div>
+                    </div>
+                    <div class="battle-log" id="battleLog"></div>
+                </div>
+                <div class="status-row">
+                    <div class="stat-chip"><i class="burn"></i><b>Burn</b> 3% HP/turn · ATK &amp; SPA ×0.7</div>
+                    <div class="stat-chip"><i class="poison"></i><b>Poison</b> 6% HP/turn</div>
+                    <div class="stat-chip"><i class="para"></i><b>Paralysis</b> 25% skip · SPE ×0.5</div>
+                    <div class="stat-chip"><i class="freeze"></i><b>Freeze</b> cannot act · 20% thaw</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RECORDS -->
+        <section class="band alt" id="records">
+            <div class="wrap">
+                <div class="sec-head">
+                    <span class="sec-no">06</span>
+                    <h2>Records &amp; rankings</h2>
+                    <p>
+                        Every finished battle lands in a pet's history. <code>GET /pets/{id}/battles</code> returns its
+                        record, <code>GET /battles/leaderboard</code> ranks win rate. The panels below fill up with the
+                        battles you fight above.
+                    </p>
+                </div>
+                <div class="records">
+                    <div class="panel rec-hist">
+                        <h4>Battle history <small>newest first</small></h4>
+                        <ul id="histList"><li class="empty">No battles yet — go fight one!</li></ul>
+                    </div>
+                    <div class="panel rec-board">
+                        <h4>Leaderboard <small>by win rate</small></h4>
+                        <ol id="boardList"><li class="empty">Needs at least one finished battle.</li></ol>
+                    </div>
+                    <div class="panel rec-reward">
+                        <h4>Rewards</h4>
+                        <div class="rw"><span>Winner</span><b>50 + opponent level × 2 XP</b><span class="coin"></span><b>+5</b></div>
+                        <div class="rw"><span>Loser</span><b>10 + opponent level XP</b><span class="coin"></span><b>+1</b></div>
+                        <p class="fine">Winners also gain effort values (EV) from the species they beat.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- API -->
+        <section class="band" id="api">
+            <div class="wrap">
+                <div class="sec-head">
+                    <span class="sec-no">07</span>
+                    <h2>One API, every interaction</h2>
+                    <p>
+                        A plain JSON HTTP API. Give an agent
+                        <a href="https://github.com/ktiays/rspets/blob/main/AGENTS.md" target="_blank" rel="noopener">AGENTS.md</a>
+                        and the installed skill, and it can run the whole loop by itself.
+                    </p>
+                </div>
+                <div class="api">
+                    <div class="api-tabs" id="apiTabs" role="tablist"></div>
+                    <div class="api-list panel" id="apiList"></div>
+                    <div class="api-session panel">
+                        <div class="code-head"><span>An agent's turn</span><em>curl</em></div>
+<pre><code><span class="c"># what should I do with this pet?</span>
+<span class="p">$</span> curl localhost:3000/pets/$PET/next-actions
+<span class="o">{ "mood": "hungry",
+  "suggested_action": "feed",
+  "battle": { "ready": true } }</span>
+
+<span class="p">$</span> curl -X POST localhost:3000/pets/$PET/feed
+
+<span class="c"># fight, let the server pick moves</span>
+<span class="p">$</span> curl -X POST localhost:3000/battles \
+    -d '{"challenger_pet_id":"A","defender_pet_id":"B"}'
+<span class="p">$</span> curl -X POST localhost:3000/battles/$B/auto
+<span class="o">{ "turns_played": 9,
+  "stop_reason": "finished",
+  "state": { "winner_pet_id": "A" } }</span>
+
+<span class="p">$</span> curl localhost:3000/battles/leaderboard</code></pre>
+                    </div>
+                </div>
+                <div class="limits">
+                    <div class="panel"><b>15</b><span>pets per user</span></div>
+                    <div class="panel"><b>4</b><span>equipped skills</span></div>
+                    <div class="panel"><b>≥30</b><span>energy to battle</span></div>
+                    <div class="panel"><b>≥50</b><span>health to battle</span></div>
+                    <div class="panel"><b>≤15</b><span>level gap</span></div>
+                    <div class="panel"><b>5m</b><span>battle cooldown</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- START -->
+        <section class="band alt" id="start">
+            <div class="wrap">
+                <div class="sec-head">
+                    <span class="sec-no">08</span>
+                    <h2>Start playing</h2>
+                    <p>macOS (Apple Silicon) and Linux. Your pets are stored in SQLite and wait for you between sessions.</p>
+                </div>
+                <div class="steps">
+                    <div class="step panel">
+                        <b>1</b>
+                        <h4>Install</h4>
+                        <div class="term mini">
+                            <div class="term-body">
+                                <code>curl -sL https://raw.githubusercontent.com/ktiays/rspets/main/install.sh | bash</code>
+                                <button class="copy" data-copy="curl -sL https://raw.githubusercontent.com/ktiays/rspets/main/install.sh | bash">COPY</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step panel">
+                        <b>2</b>
+                        <h4>Configure <small>~/.rspets/config.toml</small></h4>
+                        <div class="term mini">
+                            <div class="term-body">
+<pre>session_id = "my-sanctuary"
+pet_server_port = 3000</pre>
+                                <button class="copy" data-copy='session_id = "my-sanctuary"&#10;pet_server_port = 3000'>COPY</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step panel">
+                        <b>3</b>
+                        <h4>Run at login</h4>
+                        <div class="term mini">
+                            <div class="term-body">
+<pre># macOS
+launchctl load -w ~/Library/LaunchAgents/me.ktiays.rspets.plist
+# Linux
+systemctl --user enable --now rspets</pre>
+                                <button class="copy" data-copy="launchctl load -w ~/Library/LaunchAgents/me.ktiays.rspets.plist">COPY</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step panel">
+                        <b>4</b>
+                        <h4>Adopt</h4>
+                        <div class="term mini">
+                            <div class="term-body">
+<pre>curl -X POST localhost:3000/users \
+  -d '{"name":"Alice"}'
+curl -X POST localhost:3000/pets/gacha \
+  -d '{"user_id":"&lt;id&gt;"}'</pre>
+                                <button class="copy" data-copy='curl -X POST localhost:3000/pets/gacha -d &apos;{"user_id":"<id>"}&apos;'>COPY</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="end-cta">
+                    <canvas id="endCanvas"></canvas>
+                    <div>
+                        <h3>Your first roll is free.</h3>
+                        <a href="https://github.com/ktiays/rspets" target="_blank" rel="noopener" class="btn btn-primary">View on GitHub</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="foot">
+            <div class="wrap">
+                <a href="#top" class="logo"><span class="logo-cube"></span>rspets</a>
+                <p>Species, skills and rules on this page are the real seed data of the rspets server. Demos run locally in your browser.</p>
+                <p class="fine">&copy; 2026 rspets</p>
             </div>
         </footer>
 
+        <div class="toast" id="toast"></div>
+
+        <script src="assets/vendor/three.min.js"></script>
+        <script src="assets/js/data.js"></script>
+        <script src="assets/js/voxel.js"></script>
         <script src="assets/js/main.js"></script>
     </body>
 </html>
