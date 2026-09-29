@@ -18,7 +18,7 @@ rspets is a virtual pet simulation with three interconnected layers:
 ### Core Workflow
 
 ```
-Create User → Gacha Pet → Care/Train → Check Skills → Equip Skills → Battle
+Create User → Gacha Pet → Ask next-actions → Care/Train → Check Skills → Equip Skills → Battle (auto or manual) → Check record
 ```
 
 ### Key Constraints (Agent Must Obey)
@@ -39,6 +39,8 @@ Create User → Gacha Pet → Care/Train → Check Skills → Equip Skills → B
 | Battle health requirement | >= 50 | `409 battle_not_healthy_enough` |
 | Max level difference in battle | 15 | `409 level_difference_too_high` |
 | Skills per pet in battle | 1–4 equipped | `409 no_equipped_skills` |
+| Auto-battle turns per call | default 100, max 200 | Clamped, not rejected |
+| List `limit` (history, battle leaderboard) | default 20, max 100 | Clamped, not rejected |
 
 ---
 
@@ -75,8 +77,17 @@ Battle (1) ──────> BattleRuntimeState (turn log, HP, stages, status)
 3. Ensure both pets meet energy (>=30) and health (>=50) requirements.
 4. Ensure level difference <= 15.
 5. Create battle via `POST /battles`.
-6. Resolve turns via `POST /battles/{id}/turn` until `state.is_finished` is `true`.
+6. Resolve it, either way:
+   - **Auto (simplest):** `POST /battles/{id}/auto` — the server picks skills and plays to the end. Check `stop_reason`.
+   - **Manual:** `POST /battles/{id}/turn` with your own skill choices until `state.is_finished` is `true`.
 7. Winner is in `state.winner_pet_id`.
+
+> Tip: `GET /pets/{id}/next-actions` returns `battle.ready` and the blocking error, so you can check steps 2–4 (except level difference) in one call.
+
+### Decision: What to Do With a Pet Right Now
+
+- **Call `GET /pets/{id}/next-actions` instead of re-deriving care rules.** Do the action in `suggested_action`, or work down `actions[]` by `priority`.
+- If `suggested_action` is `null`, nothing is needed yet. Wait `next_available_in_seconds` (if set) and ask again.
 
 ---
 
@@ -206,6 +217,64 @@ Response (`200`) — PetStatusResponse:
 }
 ```
 
+#### GET /pets/{id}/next-actions
+**Preferred way to decide what to do.** Read-only. Evaluates all seven care actions with the same checks the action endpoints use, so `available` always matches what the endpoint would accept.
+
+Response (`200`) — NextActionsResponse, or `404 pet_not_found`:
+```json
+{
+  "pet_id": "...",
+  "mood": "hungry",
+  "suggested_action": "feed",        // highest-priority recommended action, or null
+  "next_available_in_seconds": null, // only set when nothing is recommended yet
+  "daily_experience_remaining": 300,
+  "actions": [
+    {
+      "action": "feed",              // feed | play | sleep | groom | train | heal | explore
+      "available": true,             // endpoint would accept the request now
+      "recommended": true,           // available AND the pet's state calls for it
+      "priority": 1,                 // 1 = do first; null if not recommended
+      "reason": "Hunger is 35 (below 40).",
+      "cooldown_remaining_seconds": 0,
+      "blocked_by": null             // else {"code": "explore_cooldown", "message": "..."}
+    }
+  ],
+  "battle": {"ready": true, "cooldown_remaining_seconds": 0, "blocked_by": null}
+}
+```
+
+Recommendation rules: heal < 70 health (urgent < 40), feed < 40 hunger (urgent < 20), sleep < 40 energy (urgent < 20), play < 50 happiness (urgent < 30), groom < 40 cleanliness. Train/explore are recommended only when no care need is pending and energy >= 60. Recommended actions are listed first by priority; the rest follow in the order feed, play, sleep, groom, train, heal, explore.
+
+#### GET /pets/{id}/battles
+A pet's win/loss record and battle history, newest first.
+
+Query: `limit` (default 20, max 100), `offset` (default 0).
+
+Response (`200`) — PetBattleHistoryResponse, or `404 pet_not_found`:
+```json
+{
+  "pet_id": "...",
+  "record": {
+    "total_battles": 5, "finished_battles": 4,
+    "wins": 3, "losses": 1, "in_progress": 1,
+    "win_rate": 0.75                 // wins / finished_battles; 0.0 if none finished
+  },
+  "limit": 20,
+  "offset": 0,
+  "battles": [
+    {
+      "battle_id": "...",
+      "challenger_pet_id": "...", "defender_pet_id": "...",
+      "opponent_pet_id": "...", "opponent_name": "Pebble",
+      "winner_pet_id": "...",
+      "result": "win",               // win | loss | in_progress (this pet's view)
+      "turns": 7,
+      "started_at": "...", "ended_at": "..."
+    }
+  ]
+}
+```
+
 #### GET /pets/{id}/skills
 List all learned and equipped skills.
 
@@ -270,7 +339,7 @@ All return `PetInteractionResponse`:
 | `/pets/{id}/explore` | POST | -25 | 15-25 | Random event. Cooldown 15m. |
 | `/pets/{id}/rename` | PATCH | — | — | Body: `{"name":"New Name"}` |
 
-**Agent care strategy:**
+**Agent care strategy:** call `GET /pets/{id}/next-actions` and follow `suggested_action`. That endpoint implements the rules below; use them only as a fallback or to understand its output.
 1. If `hunger < 40` → **feed**
 2. If `energy < 30` and no immediate battle needed → **sleep**
 3. If `health < 90` and not already healthy → **heal**
@@ -278,7 +347,7 @@ All return `PetInteractionResponse`:
 5. If `happiness < 50` → **play**
 6. If energy and cooldowns allow → **train** or **explore** for XP
 
-Always check response for cooldown errors (`429`) and retry after the indicated seconds.
+Always check response for cooldown errors (`429`) and retry after the indicated seconds. `next-actions` already reports these as `cooldown_remaining_seconds`, so asking first avoids the failed call.
 
 ---
 
@@ -350,7 +419,7 @@ Request:
 
 Response (`200`): `BattleView` (updated with new turn in `turns` array)
 
-**Agent battle loop:**
+**Agent battle loop (manual):**
 ```python
 battle = create_battle(pet_a, pet_b)
 while not battle.state.is_finished:
@@ -360,6 +429,49 @@ while not battle.state.is_finished:
     battle = resolve_turn(battle.id, challenger_skill, defender_skill)
 winner = battle.state.winner_pet_id
 ```
+
+#### POST /battles/{id}/auto
+Let the server play the battle. Each turn, both pets pick the equipped skill with the best expected damage plus secondary-effect value (ties go to the earlier equipped skill). Turn resolution, persistence, and rewards are the same as `/turn`.
+
+Request body is **optional** (omit it or send an empty body):
+```json
+{"max_turns": 100}
+```
+`max_turns` defaults to 100 and is clamped to 1–200.
+
+Response (`200`): `BattleView` fields plus:
+```json
+{
+  "battle": { /* ... */ },
+  "state": { /* ... */ },
+  "turns_played": 9,          // turns played by THIS call, not the battle total
+  "stop_reason": "finished"   // finished | turn_limit | stalemate
+}
+```
+
+| `stop_reason` | Meaning | Agent action |
+|---------------|---------|--------------|
+| `finished` | Winner decided (`state.winner_pet_id`) | Done. |
+| `turn_limit` | `max_turns` reached, battle still in progress | Call `/auto` again, or continue with `/turn`. |
+| `stalemate` | Both pets fainted from end-of-turn status damage; no winner | Battle cannot progress. Start a new battle if needed. |
+
+Errors: `404 battle_not_found`, `409 battle_finished`, `400 invalid_request_body` (body present but invalid).
+
+#### GET /battles/leaderboard
+Pets ranked by win rate over finished battles (ties: more finished battles, then higher level). Unfinished battles are excluded.
+
+Query: `limit` (default 20, max 100), `min_battles` (default 3; pets with fewer finished battles are omitted). A non-numeric value returns `400`.
+
+Response (`200`):
+```json
+[
+  {
+    "rank": 1, "pet_id": "...", "pet_name": "Ember Cat 1", "owner_id": "...",
+    "level": 12, "wins": 9, "losses": 1, "finished_battles": 10, "win_rate": 0.9
+  }
+]
+```
+(`GET /pets/leaderboard` is different: it ranks by level and XP.)
 
 **Battle resolution details:**
 - Action order: Higher `effective_speed` goes first. Tie = 50/50 coin flip.
@@ -459,6 +571,7 @@ When an API call fails, parse the error response:
 | `no_equipped_skills` | 409 | Check skills (`GET /pets/{id}/skills`), equip some (`PATCH /pets/{id}/skills/equipment`). |
 | `battle_finished` | 409 | Battle already ended. Check winner via `GET /battles/{id}`. |
 | `invalid_skill_selection` | 400 | Skill not equipped by that pet. Use only equipped skill IDs. |
+| `invalid_request_body` | 400 | `/battles/{id}/auto` body was not valid JSON with an optional numeric `max_turns`. |
 | `invalid_skill_loadout` | 400 | Must equip 1–4 skills. |
 | `skill_not_learned` | 400 | Pet hasn't learned that skill yet. Check `learned_at_level`. |
 
@@ -474,10 +587,10 @@ POST /pets/gacha {"user_id":"<user-id>"}
   → pet (or coins if duplicate)
 GET /pets/<id>/status
   → check mood, stats, battle_stats
-POST /pets/<id>/feed
-POST /pets/<id>/play
-POST /pets/<id>/train
-POST /pets/<id>/explore
+GET /pets/<id>/next-actions
+  → suggested_action (e.g. "feed"), or next_available_in_seconds
+POST /pets/<id>/<suggested_action>
+  → repeat: ask next-actions, act, wait out cooldowns
 ```
 
 ### Prepare for Battle
@@ -488,10 +601,16 @@ PATCH /pets/<id>/skills/equipment {"skill_ids":["...","..."]}
   → customize loadout
 POST /battles {"challenger_pet_id":"A","defender_pet_id":"B"}
   → battle.id, state
-POST /battles/<id>/turn {"challenger_skill_id":"...","defender_skill_id":"..."}
-  → repeat until state.is_finished
+POST /battles/<id>/auto
+  → stop_reason "finished" → state.winner_pet_id
+  (or manual: POST /battles/<id>/turn {"challenger_skill_id":"...","defender_skill_id":"..."}
+   repeat until state.is_finished)
 GET /battles/<id>
   → confirm winner
+GET /pets/<id>/battles
+  → win/loss record and history
+GET /battles/leaderboard
+  → win-rate ranking
 ```
 
 ### Adopt a Stray

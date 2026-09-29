@@ -11,7 +11,9 @@ rspets is a modern pet simulation platform that brings warmth to your terminal. 
 - **Adoption Center** — Bring home a new friend through the gacha system. Each pet is backed by a species template with unique elements, rarities, and battle stats.
 - **Health Tracking** — Monitor hunger, happiness, energy, health, and cleanliness in real time.
 - **Progression System** — Train your pets to gain experience, level up, unlock skills, and climb the leaderboard.
-- **Skill & Battle System** — Equip up to 4 skills per pet and engage in turn-based 1v1 battles with elemental type matchups.
+- **Skill & Battle System** — Equip up to 4 skills per pet and engage in turn-based 1v1 battles with elemental type matchups. Resolve turns yourself or let the server auto-play a whole battle.
+- **Care Guidance** — Ask what your pet needs right now: `GET /pets/{id}/next-actions` reports which actions are available, what is recommended, and how long each cooldown has left.
+- **Battle Records** — Every pet keeps a win/loss record and battle history, and a win-rate leaderboard ranks the best fighters.
 - **Persistent Memories** — Your companions are safely stored in SQLite. Close the app, come back tomorrow — your pets will be waiting exactly where you left them.
 - **Rich HTTP API** — Integrate rspets into your own tools and workflows with clean REST endpoints.
 
@@ -116,6 +118,22 @@ curl -X POST http://localhost:3000/battles \
 curl -X POST http://localhost:3000/battles/<battle-id>/turn \
   -H "Content-Type: application/json" \
   -d '{"challenger_skill_id":"<skill-id>","defender_skill_id":"<skill-id>"}'
+
+# ...or let the server play the whole battle
+curl -X POST http://localhost:3000/battles/<battle-id>/auto
+```
+
+### 6. Ask what to do next, and check the record
+
+```bash
+# What does this pet need right now?
+curl http://localhost:3000/pets/<id>/next-actions
+
+# Win/loss record and battle history
+curl http://localhost:3000/pets/<id>/battles
+
+# Win-rate leaderboard
+curl http://localhost:3000/battles/leaderboard
 ```
 
 ---
@@ -187,6 +205,16 @@ When you're away, pet stats decay based on elapsed whole hours since the last in
 
 > Any pet can gain at most **300 XP per UTC day**.
 
+#### Next Actions
+
+`GET /pets/:id/next-actions` tells a client what to do now, so it does not have to re-derive the care rules. It evaluates all seven interactions with the same checks the action endpoints use, so `available` always agrees with what the endpoint would accept.
+
+- Each action reports `available`, `recommended`, `priority`, a `reason`, the seconds until its cooldowns lift (`cooldown_remaining_seconds`), and `blocked_by` (the error `code` and `message` the endpoint would return).
+- **Care needs come first**: heal below 70 health (urgent below 40), feed below 40 hunger (urgent below 20), sleep below 40 energy (urgent below 20), play below 50 happiness (urgent below 30), and groom below 40 cleanliness.
+- **Train and explore** are only recommended once no care need is pending and energy is at least 60.
+- When nothing is recommended yet, `next_available_in_seconds` is the wait until the soonest needed action unlocks.
+- The response also includes battle readiness (`battle.ready`, its cooldown, and any blocker) and `daily_experience_remaining`.
+
 ### Skills & Battles
 
 Each species template carries a skill-learning pool. Pets automatically learn skills when they reach the required level.
@@ -199,6 +227,8 @@ Each species template carries a skill-learning pool. Pets automatically learn sk
 - Damage formula includes level, power, offensive/defensive stats, STAB, type effectiveness, critical hits, and random factor.
 - Supported status conditions: **Poison**, **Burn**, **Paralysis**, **Freeze**.
 - Battle rewards: XP, Pet Coins, and EV gains based on the defeated species' strongest base stat.
+- `POST /battles/:id/auto` plays a battle forward on the server. Both pets pick the equipped skill with the best expected damage plus secondary-effect value. It uses the same turn resolution, persistence, and rewards as manual turns.
+- Every pet has a win/loss record and paged battle history (`GET /pets/:id/battles`). `GET /battles/leaderboard` ranks pets by win rate.
 
 #### Battle Requirements
 
@@ -421,6 +451,95 @@ Returns a detailed status report including computed fields.
 }
 ```
 
+##### `GET /pets/:id/next-actions` — What should this pet do now?
+
+Evaluates every care interaction against the pet's current state (decay and daily reset applied). Read-only.
+
+**Response:** `200 OK` — NextActionsResponse, or `404 Not Found` (`pet_not_found`)
+
+```json
+{
+  "pet_id": "...",
+  "mood": "hungry",
+  "suggested_action": "feed",
+  "next_available_in_seconds": null,
+  "daily_experience_remaining": 300,
+  "actions": [
+    {
+      "action": "feed",
+      "available": true,
+      "recommended": true,
+      "priority": 1,
+      "reason": "Hunger is 35 (below 40).",
+      "cooldown_remaining_seconds": 0,
+      "blocked_by": null
+    },
+    {
+      "action": "explore",
+      "available": false,
+      "recommended": false,
+      "priority": null,
+      "reason": null,
+      "cooldown_remaining_seconds": 540,
+      "blocked_by": { "code": "explore_cooldown", "message": "..." }
+    }
+  ],
+  "battle": { "ready": true, "cooldown_remaining_seconds": 0, "blocked_by": null }
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `suggested_action` | string? | The highest-priority recommended action, if any |
+| `next_available_in_seconds` | number? | Only when nothing is recommended: seconds until the soonest needed action unlocks |
+| `daily_experience_remaining` | number | XP the pet can still gain today (300 minus `daily_exp_gained`) |
+| `actions[]` | array | Recommended actions first in priority order (`priority` 1 = do first), then the rest in the order feed, play, sleep, groom, train, heal, explore |
+| `actions[].cooldown_remaining_seconds` | number | Seconds until global and per-action cooldowns lift |
+| `battle` | object | Whether the pet can start a battle now, with cooldown and the blocking error if not |
+
+##### `GET /pets/:id/battles` — Battle record and history
+
+**Query parameters:**
+
+| Param | Type | Default | Description |
+|-------|------|---------|-------------|
+| `limit` | number | `20` | Battles to return (1–100) |
+| `offset` | number | `0` | Battles to skip, newest first |
+
+**Response:** `200 OK` — PetBattleHistoryResponse, or `404 Not Found` (`pet_not_found`)
+
+```json
+{
+  "pet_id": "...",
+  "record": {
+    "total_battles": 5,
+    "finished_battles": 4,
+    "wins": 3,
+    "losses": 1,
+    "in_progress": 1,
+    "win_rate": 0.75
+  },
+  "limit": 20,
+  "offset": 0,
+  "battles": [
+    {
+      "battle_id": "...",
+      "challenger_pet_id": "...",
+      "defender_pet_id": "...",
+      "opponent_pet_id": "...",
+      "opponent_name": "Pebble",
+      "winner_pet_id": "...",
+      "result": "win",
+      "turns": 7,
+      "started_at": "2026-04-24T...",
+      "ended_at": "2026-04-24T..."
+    }
+  ]
+}
+```
+
+`result` is `win`, `loss`, or `in_progress` from this pet's point of view. `win_rate` is `wins / finished_battles` (`0.0` until a battle finishes); unfinished battles are excluded.
+
 ##### `GET /pets/:id/skills` — List pet skills
 
 **Response:** `200 OK`
@@ -584,6 +703,62 @@ Returns `409 Conflict` (`already_healthy`) if health >= 90.
 | 404 | `battle_not_found` | Battle does not exist |
 | 409 | `battle_finished` | Battle already ended |
 | 400 | `invalid_skill_selection` | Skill not equipped by that pet |
+
+##### `POST /battles/:id/auto` — Auto-play a battle
+
+The server picks a skill for both pets each turn (highest expected damage plus secondary-effect value; ties go to the earlier equipped skill) and resolves turns until the battle stops. Persistence and rewards are identical to manual turns.
+
+**Request body (optional):** may be omitted or empty.
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `max_turns` | number | No | Turns to play in this call (default `100`, clamped to 1–200) |
+
+**Response:** `200 OK` — BattleView plus:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `turns_played` | number | Turns played by this call, not the battle's total |
+| `stop_reason` | string | `finished` (a winner was decided), `turn_limit` (`max_turns` reached, battle still in progress), or `stalemate` (both pets fainted from end-of-turn status damage; no winner) |
+
+A battle stopped at `turn_limit` can be continued with another `/auto` call or with `/turn`.
+
+**Error responses:**
+
+| Status | Code | Meaning |
+|--------|------|---------|
+| 400 | `invalid_request_body` | Body is present but not valid |
+| 404 | `battle_not_found` | Battle does not exist |
+| 409 | `battle_finished` | Battle already ended |
+
+##### `GET /battles/leaderboard` — Win-rate leaderboard
+
+Ranks pets by win rate over finished battles (ties: more finished battles, then higher level).
+
+**Query parameters:**
+
+| Param | Type | Default | Description |
+|-------|------|---------|-------------|
+| `limit` | number | `20` | Entries to return (1–100) |
+| `min_battles` | number | `3` | Finished battles a pet needs to be ranked |
+
+**Response:** `200 OK` — Array of entries. A non-numeric query value returns `400 Bad Request`.
+
+```json
+[
+  {
+    "rank": 1,
+    "pet_id": "...",
+    "pet_name": "Ember Cat 1",
+    "owner_id": "...",
+    "level": 12,
+    "wins": 9,
+    "losses": 1,
+    "finished_battles": 10,
+    "win_rate": 0.9
+  }
+]
+```
 
 ---
 
